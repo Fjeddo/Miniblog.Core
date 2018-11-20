@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Miniblog.Core.Models;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Miniblog.Core.Services;
+using Miniblog.Infrastructure.Services;
 
 namespace Miniblog.Core.Controllers
 {

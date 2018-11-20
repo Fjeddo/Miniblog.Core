@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.SyndicationFeed;
 using Microsoft.SyndicationFeed.Atom;
 using Microsoft.SyndicationFeed.Rss;
-using Miniblog.Core.Services;
+using Miniblog.Infrastructure.Services;
 using WebEssentials.AspNetCore.Pwa;
 
 namespace Miniblog.Core.Controllers
@@ -53,7 +53,7 @@ namespace Miniblog.Core.Controllers
 
                 var posts = await _blog.GetPosts(int.MaxValue);
 
-                foreach (Models.Post post in posts)
+                foreach (Domain.Models.Post post in posts)
                 {
                     var lastMod = new[] { post.PubDate, post.LastModified };
 
@@ -112,7 +112,7 @@ namespace Miniblog.Core.Controllers
                 var posts = await _blog.GetPosts(10);
                 var writer = await GetWriter(type, xmlWriter, posts.Max(p => p.PubDate));
 
-                foreach (Models.Post post in posts)
+                foreach (Domain.Models.Post post in posts)
                 {
                     var item = new AtomEntry
                     {

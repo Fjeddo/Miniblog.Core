@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using WilderMinds.MetaWeblog;
 
-namespace Miniblog.Core.Services
+namespace Miniblog.Infrastructure.Services
 {
     public class MetaWeblogService : IMetaWeblogProvider
     {
@@ -27,10 +27,10 @@ namespace Miniblog.Core.Services
         {
             ValidateUser(username, password);
 
-            var newPost = new Models.Post
+            var newPost = new Domain.Models.Post
             {
                 Title = post.title,
-                Slug = !string.IsNullOrWhiteSpace(post.wp_slug) ? post.wp_slug : Models.Post.CreateSlug(post.title),
+                Slug = !string.IsNullOrWhiteSpace(post.wp_slug) ? post.wp_slug : Domain.Models.Post.CreateSlug(post.title),
                 Content = post.description,
                 IsPublished = publish,
                 Categories = post.categories
@@ -171,7 +171,7 @@ namespace Miniblog.Core.Services
             _context.HttpContext.User = new ClaimsPrincipal(identity);
         }
 
-        private WilderMinds.MetaWeblog.Post ToMetaWebLogPost(Models.Post post)
+        private WilderMinds.MetaWeblog.Post ToMetaWebLogPost(Domain.Models.Post post)
         {
             var request = _context.HttpContext.Request;
             string url = request.Scheme + "://" + request.Host;
