@@ -6,7 +6,7 @@ using System.Xml;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Miniblog.Domain.Models;
+using Miniblog.Core.Models;
 using Miniblog.Infrastructure.Services;
 using WebEssentials.AspNetCore.Pwa;
 
@@ -79,7 +79,7 @@ namespace Miniblog.Core.Controllers
 
             if (string.IsNullOrEmpty(id))
             {
-                return View(new Post());
+                return View(new PostViewModel());
             }
 
             var post = await _blog.GetPostById(id);
@@ -94,7 +94,7 @@ namespace Miniblog.Core.Controllers
 
         [Route("/blog/{slug?}")]
         [HttpPost, Authorize, AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> UpdatePost(Post post)
+        public async Task<IActionResult> UpdatePost(PostViewModel post)
         {
             if (!ModelState.IsValid)
             {
@@ -118,7 +118,7 @@ namespace Miniblog.Core.Controllers
             return Redirect(post.GetEncodedLink());
         }
 
-        private async Task SaveFilesToDisk(Post post)
+        private async Task SaveFilesToDisk(PostViewModel post)
         {
             var imgRegex = new Regex("<img[^>].+ />", RegexOptions.IgnoreCase | RegexOptions.Compiled);
             var base64Regex = new Regex("data:[^/]+/(?<ext>[a-z]+);base64,(?<base64>.+)", RegexOptions.IgnoreCase);
@@ -165,7 +165,7 @@ namespace Miniblog.Core.Controllers
 
         [Route("/blog/comment/{postId}")]
         [HttpPost]
-        public async Task<IActionResult> AddComment(string postId, Comment comment)
+        public async Task<IActionResult> AddComment(string postId, CommentViewModel comment)
         {
             var post = await _blog.GetPostById(postId);
 

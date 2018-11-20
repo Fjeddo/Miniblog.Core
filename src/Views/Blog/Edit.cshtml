@@ -1,4 +1,4 @@
-﻿@model Miniblog.Domain.Models.Post
+﻿@model PostViewModel
 @{
     bool isNew = string.IsNullOrEmpty(Model.Title);
     ViewData["Title"] = "Edit " + (Model.Title ?? "new post");
