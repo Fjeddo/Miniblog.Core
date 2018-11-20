@@ -10,9 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miniblog.Domain", "Miniblog.Domain\Miniblog.Domain.csproj", "{E08388D3-8041-417C-90EE-71EF49A9CACA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miniblog.Domain", "Miniblog.Domain\Miniblog.Domain.csproj", "{E08388D3-8041-417C-90EE-71EF49A9CACA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miniblog.Infrastructure", "Miniblog.Infrastructure\Miniblog.Infrastructure.csproj", "{D6351855-6EBF-4EED-B39E-A179BE476366}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Miniblog.Infrastructure", "Miniblog.Infrastructure\Miniblog.Infrastructure.csproj", "{D6351855-6EBF-4EED-B39E-A179BE476366}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miniblog.Cqrs.Read", "Miniblog.Cqrs.Read\Miniblog.Cqrs.Read.csproj", "{9627FE3B-6CA6-493D-9B77-486675040478}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{D6351855-6EBF-4EED-B39E-A179BE476366}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6351855-6EBF-4EED-B39E-A179BE476366}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6351855-6EBF-4EED-B39E-A179BE476366}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9627FE3B-6CA6-493D-9B77-486675040478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9627FE3B-6CA6-493D-9B77-486675040478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9627FE3B-6CA6-493D-9B77-486675040478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9627FE3B-6CA6-493D-9B77-486675040478}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Miniblog.Cqrs.Read\Miniblog.Cqrs.Read.csproj" />
     <ProjectReference Include="..\Miniblog.Infrastructure\Miniblog.Infrastructure.csproj" />
   </ItemGroup>
 
