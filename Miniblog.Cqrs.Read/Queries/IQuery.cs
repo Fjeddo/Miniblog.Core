@@ -1,6 +1,6 @@
 ﻿namespace Miniblog.Cqrs.Read.Queries
 {
-    internal interface IQuery
+    public interface IQuery
     {
     }
 }
