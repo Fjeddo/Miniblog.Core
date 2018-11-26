@@ -8,7 +8,7 @@ namespace Miniblog.Cqrs.Read
     {
         public static IServiceCollection AddQueryRouting(this IServiceCollection services)
         {
-            services.AddTransient(typeof(PostsQuery), typeof(PostsQueryHandler));
+            services.AddSingleton<QueryRouter>();
 
             return services;
         }

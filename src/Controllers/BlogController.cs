@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -7,6 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Miniblog.Core.Models;
+using Miniblog.Cqrs.Read;
+using Miniblog.Cqrs.Read.Queries;
+using Miniblog.Domain.Models;
 using Miniblog.Infrastructure.Services;
 using WebEssentials.AspNetCore.Pwa;
 
@@ -17,18 +21,22 @@ namespace Miniblog.Core.Controllers
         private readonly IBlogService _blog;
         private readonly IOptionsSnapshot<BlogSettings> _settings;
         private readonly WebManifest _manifest;
+        private readonly QueryRouter _queryRouter;
 
-        public BlogController(IBlogService blog, IOptionsSnapshot<BlogSettings> settings, WebManifest manifest)
+        public BlogController(IBlogService blog, IOptionsSnapshot<BlogSettings> settings, WebManifest manifest, QueryRouter queryRouter)
         {
             _blog = blog;
             _settings = settings;
             _manifest = manifest;
+            _queryRouter = queryRouter;
         }
 
         [Route("/{page:int?}")]
         [OutputCache(Profile = "default")]
         public async Task<IActionResult> Index([FromRoute]int page = 0)
         {
+            var qh = _queryRouter.ExecuteQuery<IEnumerable<Post>>(new PostsQuery());
+
             var posts = await _blog.GetPosts(_settings.Value.PostsPerPage, _settings.Value.PostsPerPage * page);
             ViewData["Title"] = _manifest.Name;
             ViewData["Description"] = _manifest.Description;
@@ -101,7 +109,7 @@ namespace Miniblog.Core.Controllers
                 return View("Edit", post);
             }
 
-            var existing = await _blog.GetPostById(post.ID) ?? post;
+            var existing = new PostViewModel();// await _blog.GetPostById(post.ID) ?? post;
             string categories = Request.Form["categories"];
 
             existing.Categories = categories.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim().ToLowerInvariant()).ToList();
@@ -113,7 +121,7 @@ namespace Miniblog.Core.Controllers
 
             await SaveFilesToDisk(existing);
 
-            await _blog.SavePost(existing);
+            //await _blog.SavePost(existing);
 
             return Redirect(post.GetEncodedLink());
         }
