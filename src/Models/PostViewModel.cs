@@ -2,15 +2,35 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Miniblog.Services.Models;
+using NUglify.Helpers;
 
 namespace Miniblog.Core.Models
 {
-    public class Post
+    public class PostViewModel
     {
+        public PostViewModel()
+        {}
+
+        public PostViewModel(Post post)
+        {
+            Categories = post.Categories;
+            Comments = post.Comments.Select(x => new CommentViewModel(x)).ToList();
+            Content = post.Content;
+            Excerpt = post.Excerpt;
+            Id = post.ID;
+            IsPublished = post.IsPublished;
+            LastModified = post.LastModified;
+            PubDate = post.PubDate;
+            Slug = post.Slug;
+            Title = post.Title;
+        }
+
         [Required]
-        public string ID { get; set; } = DateTime.UtcNow.Ticks.ToString();
+        public string Id { get; set; }
 
         [Required]
         public string Title { get; set; }
@@ -23,15 +43,15 @@ namespace Miniblog.Core.Models
         [Required]
         public string Content { get; set; }
 
-        public DateTime PubDate { get; set; } = DateTime.UtcNow;
+        public DateTime PubDate { get; set; }
 
-        public DateTime LastModified { get; set; } = DateTime.UtcNow;
+        public DateTime LastModified { get; set; }
 
-        public bool IsPublished { get; set; } = true;
+        public bool IsPublished { get; set; }
 
         public IList<string> Categories { get; set; } = new List<string>();
 
-        public IList<Comment> Comments { get; } = new List<Comment>();
+        public IList<CommentViewModel> Comments { get; } = new List<CommentViewModel>();
 
         public string GetLink()
         {
@@ -99,6 +119,26 @@ namespace Miniblog.Core.Models
                 result = Regex.Replace(result, @"\[youtube:(.*?)\]", m => string.Format(video, m.Groups[1].Value));
             }
             return result;
+        }
+
+        public Post ToPost()
+        {
+            var post = new Post
+            {
+                Excerpt = Excerpt,
+                Categories = Categories,
+                Title = Title,
+                LastModified = LastModified,
+                Content = Content,
+                Slug = Slug,
+                ID = Id,
+                PubDate = PubDate,
+                IsPublished = IsPublished
+            };
+
+            Comments.ForEach(x => post.Comments.Add(x.ToComment()));
+
+            return post;
         }
     }
 }

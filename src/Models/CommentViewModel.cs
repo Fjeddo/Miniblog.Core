@@ -1,13 +1,27 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Miniblog.Services.Models;
 
 namespace Miniblog.Core.Models
 {
-    public class Comment
+    public class CommentViewModel
     {
+        public CommentViewModel()
+        {}
+
+        public CommentViewModel(Comment comment)
+        {
+            Content = comment.Content;
+            Author = comment.Author;
+            Email = comment.Email;
+            Id = comment.ID;
+            IsAdmin = comment.IsAdmin;
+            PubDate = comment.PubDate;
+        }
+
         [Required]
-        public string ID { get; set; } = Guid.NewGuid().ToString();
+        public string Id { get; }
 
         [Required]
         public string Author { get; set; }
@@ -18,8 +32,7 @@ namespace Miniblog.Core.Models
         [Required]
         public string Content { get; set; }
 
-        [Required]
-        public DateTime PubDate { get; set; } = DateTime.UtcNow;
+        [Required] public DateTime PubDate { get; }
 
         public bool IsAdmin { get; set; }
 
@@ -44,6 +57,19 @@ namespace Miniblog.Core.Models
         public string RenderContent()
         {
             return Content;
+        }
+
+        public Comment ToComment()
+        {
+            return new Comment
+            {
+                Content = Content,
+                ID = Id,
+                PubDate = PubDate,
+                Email = Email,
+                Author = Author,
+                IsAdmin = IsAdmin
+            };
         }
     }
 }

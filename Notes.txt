@@ -1,0 +1,3 @@
+- Rename Post -> PostViewModel, Comment -> CommentViewModel
+- Move Services to own project
+	- Models, including new ctors for converting in both direction Post <-> PostViewModel, Comment <-> CommentViewModel

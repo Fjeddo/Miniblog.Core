@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Miniblog.Core.Models;
-using Miniblog.Core.Services;
+using Miniblog.Services;
 using WebEssentials.AspNetCore.Pwa;
 
 namespace Miniblog.Core.Controllers
@@ -34,7 +34,7 @@ namespace Miniblog.Core.Controllers
             ViewData["Description"] = _manifest.Description;
             ViewData["prev"] = $"/{page + 1}/";
             ViewData["next"] = $"/{(page <= 1 ? null : page - 1 + "/")}";
-            return View("~/Views/Blog/Index.cshtml", posts);
+            return View("~/Views/Blog/Index.cshtml", posts.Select(x => new PostViewModel(x)));
         }
 
         [Route("/blog/category/{category}/{page:int?}")]
@@ -46,7 +46,7 @@ namespace Miniblog.Core.Controllers
             ViewData["Description"] = $"Articles posted in the {category} category";
             ViewData["prev"] = $"/blog/category/{category}/{page + 1}/";
             ViewData["next"] = $"/blog/category/{category}/{(page <= 1 ? null : page - 1 + "/")}";
-            return View("~/Views/Blog/Index.cshtml", posts);
+            return View("~/Views/Blog/Index.cshtml", posts.Select(x => new PostViewModel(x)));
         }
 
         // This is for redirecting potential existing URLs from the old Miniblog URL format
@@ -61,11 +61,11 @@ namespace Miniblog.Core.Controllers
         [OutputCache(Profile = "default")]
         public async Task<IActionResult> Post(string slug)
         {
-            var post = await _blog.GetPostBySlug(slug);
+            var p = await _blog.GetPostBySlug(slug);
 
-            if (post != null)
+            if (p != null)
             {
-                return View(post);
+                return View(new PostViewModel(p));
             }
 
             return NotFound();
@@ -79,14 +79,14 @@ namespace Miniblog.Core.Controllers
 
             if (string.IsNullOrEmpty(id))
             {
-                return View(new Post());
+                return View(new PostViewModel());
             }
 
-            var post = await _blog.GetPostById(id);
+            var p = await _blog.GetPostById(id);
 
-            if (post != null)
+            if (p != null)
             {
-                return View(post);
+                return View(new PostViewModel(p));
             }
 
             return NotFound();
@@ -94,31 +94,32 @@ namespace Miniblog.Core.Controllers
 
         [Route("/blog/{slug?}")]
         [HttpPost, Authorize, AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> UpdatePost(Post post)
+        public async Task<IActionResult> UpdatePost(PostViewModel post)
         {
             if (!ModelState.IsValid)
             {
                 return View("Edit", post);
             }
 
-            var existing = await _blog.GetPostById(post.ID) ?? post;
+            var p = await _blog.GetPostById(post.Id);
+            var existing = p != null ? new PostViewModel(p) : post;
             string categories = Request.Form["categories"];
 
             existing.Categories = categories.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim().ToLowerInvariant()).ToList();
             existing.Title = post.Title.Trim();
-            existing.Slug = !string.IsNullOrWhiteSpace(post.Slug) ? post.Slug.Trim() : Models.Post.CreateSlug(post.Title);
+            existing.Slug = !string.IsNullOrWhiteSpace(post.Slug) ? post.Slug.Trim() : PostViewModel.CreateSlug(post.Title);
             existing.IsPublished = post.IsPublished;
             existing.Content = post.Content.Trim();
             existing.Excerpt = post.Excerpt.Trim();
 
             await SaveFilesToDisk(existing);
 
-            await _blog.SavePost(existing);
+            await _blog.SavePost(existing.ToPost());
 
             return Redirect(post.GetEncodedLink());
         }
 
-        private async Task SaveFilesToDisk(Post post)
+        private async Task SaveFilesToDisk(PostViewModel post)
         {
             var imgRegex = new Regex("<img[^>].+ />", RegexOptions.IgnoreCase | RegexOptions.Compiled);
             var base64Regex = new Regex("data:[^/]+/(?<ext>[a-z]+);base64,(?<base64>.+)", RegexOptions.IgnoreCase);
@@ -165,9 +166,10 @@ namespace Miniblog.Core.Controllers
 
         [Route("/blog/comment/{postId}")]
         [HttpPost]
-        public async Task<IActionResult> AddComment(string postId, Comment comment)
+        public async Task<IActionResult> AddComment(string postId, CommentViewModel comment)
         {
-            var post = await _blog.GetPostById(postId);
+            var p = await _blog.GetPostById(postId);
+            var post = new PostViewModel(p);
 
             if (!ModelState.IsValid)
             {
@@ -189,10 +191,10 @@ namespace Miniblog.Core.Controllers
             if (!Request.Form.ContainsKey("website"))
             {
                 post.Comments.Add(comment);
-                await _blog.SavePost(post);
+                await _blog.SavePost(post.ToPost());
             }
 
-            return Redirect(post.GetEncodedLink() + "#" + comment.ID);
+            return Redirect(post.GetEncodedLink() + "#" + comment.Id);
         }
 
         [Route("/blog/comment/{postId}/{commentId}")]

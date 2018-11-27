@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using WilderMinds.MetaWeblog;
 
-namespace Miniblog.Core.Services
+namespace Miniblog.Services
 {
     public class MetaWeblogService : IMetaWeblogProvider
     {

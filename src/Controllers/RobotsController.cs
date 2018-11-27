@@ -8,7 +8,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.SyndicationFeed;
 using Microsoft.SyndicationFeed.Atom;
 using Microsoft.SyndicationFeed.Rss;
-using Miniblog.Core.Services;
+using Miniblog.Core.Models;
+using Miniblog.Services;
+using NUglify.Helpers;
 using WebEssentials.AspNetCore.Pwa;
 
 namespace Miniblog.Core.Controllers
@@ -51,9 +53,10 @@ namespace Miniblog.Core.Controllers
                 xml.WriteStartDocument();
                 xml.WriteStartElement("urlset", "http://www.sitemaps.org/schemas/sitemap/0.9");
 
-                var posts = await _blog.GetPosts(int.MaxValue);
+                var ps = await _blog.GetPosts(int.MaxValue);
+                var posts = ps.Select(x => new PostViewModel(x));
 
-                foreach (Models.Post post in posts)
+                foreach (PostViewModel post in posts)
                 {
                     var lastMod = new[] { post.PubDate, post.LastModified };
 
@@ -109,10 +112,11 @@ namespace Miniblog.Core.Controllers
 
             using (XmlWriter xmlWriter = XmlWriter.Create(Response.Body, new XmlWriterSettings() { Async = true, Indent = true, Encoding = new UTF8Encoding(false) }))
             {
-                var posts = await _blog.GetPosts(10);
+                var ps = await _blog.GetPosts(10);
+                var posts = ps.Select(x => new PostViewModel(x));
                 var writer = await GetWriter(type, xmlWriter, posts.Max(p => p.PubDate));
 
-                foreach (Models.Post post in posts)
+                foreach (PostViewModel post in posts)
                 {
                     var item = new AtomEntry
                     {
