@@ -137,11 +137,10 @@ namespace Miniblog.Services
                 await doc.SaveAsync(fs, SaveOptions.None, CancellationToken.None).ConfigureAwait(false);
             }
 
-            if (!_cache.Contains(post))
-            {
-                _cache.Add(post);
-                SortCache();
-            }
+            _cache.RemoveAll(x => x.ID == post.ID);
+            _cache.Add(post);
+            SortCache();
+
         }
 
         public Task DeletePost(Post post)
@@ -153,11 +152,8 @@ namespace Miniblog.Services
                 File.Delete(filePath);
             }
 
-            if (_cache.Contains(post))
-            {
-                _cache.Remove(post);
-            }
-
+            _cache.RemoveAll(x => x.ID == post.ID);
+            
             return Task.CompletedTask;
         }
 
