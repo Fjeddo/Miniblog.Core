@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Miniblog.Core.Models;
+using Miniblog.Misc;
 using Miniblog.Services;
 using WebEssentials.AspNetCore.Pwa;
 
@@ -107,7 +108,7 @@ namespace Miniblog.Core.Controllers
 
             existing.Categories = categories.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim().ToLowerInvariant()).ToList();
             existing.Title = post.Title.Trim();
-            existing.Slug = !string.IsNullOrWhiteSpace(post.Slug) ? post.Slug.Trim() : PostViewModel.CreateSlug(post.Title);
+            existing.Slug = !string.IsNullOrWhiteSpace(post.Slug) ? post.Slug.Trim() : PostHelpers.CreateSlug(post.Title);
             existing.IsPublished = post.IsPublished;
             existing.Content = post.Content.Trim();
             existing.Excerpt = post.Excerpt.Trim();

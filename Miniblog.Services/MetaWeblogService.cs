@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Miniblog.Misc;
 using WilderMinds.MetaWeblog;
 
 namespace Miniblog.Services
@@ -30,7 +31,7 @@ namespace Miniblog.Services
             var newPost = new Models.Post
             {
                 Title = post.title,
-                Slug = !string.IsNullOrWhiteSpace(post.wp_slug) ? post.wp_slug : Models.Post.CreateSlug(post.title),
+                Slug = !string.IsNullOrWhiteSpace(post.wp_slug) ? post.wp_slug : PostHelpers.CreateSlug(post.title),
                 Content = post.description,
                 IsPublished = publish,
                 Categories = post.categories

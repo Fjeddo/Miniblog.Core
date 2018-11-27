@@ -10,6 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Miniblog.Misc\Miniblog.Misc.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Authentication.Cookies">
       <HintPath>C:\Users\fredrik.johnsson\.nuget\packages\microsoft.aspnetcore.authentication.cookies\2.1.0\lib\netstandard2.0\Microsoft.AspNetCore.Authentication.Cookies.dll</HintPath>
     </Reference>
